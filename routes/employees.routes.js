@@ -54,14 +54,26 @@ router.put("/:id", auth, async (req, res) => {
   res.json(employeesUpdate);
 });
 
-router.delete("/:name", auth, async (req, res) => {
-  await Employees.findOneAndDelete(req.params.name);
-  res.json({ message: "employe deleted" });
-});
-
-router.delete("/:id", auth, async (req, res) => {
-  await Employees.findByIdAndDelete(req.params.id);
-  res.json({ message: "employe deleted" });
+router.delete("/", auth, async (req, res) => {
+  try {
+    const { id, name } = req.query;
+    if (id) {
+      const employeesDelete = await Employees.findByIdAndDelete(id);
+      if (!employeesDelete) {
+        return res.status(404).json({ message: "Id Not Found" });
+      }
+      return res.json({message: "Employe Deleted"});
+    }
+    if (name) {
+      const employeesDelete = await Employees.findOneAndDelete({ name: name });
+      if(!employeesDelete){
+        return res.status(404).json({message: 'Name not found'})
+      }
+      return res.json({message: "Employe Deleted"});
+    }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 module.exports = router;
