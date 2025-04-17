@@ -6,6 +6,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const authRoutes = require("./routes/auth.routes");
+const employeRoutes = require("./routes/employees.routes");
 
 const app = express();
 const PORT = process.env.PORT;
@@ -13,6 +14,7 @@ const PORT = process.env.PORT;
 app.use(cors());
 app.use(express.json());
 app.use("/api/auth", authRoutes);
+app.use("/api/employees", employeRoutes);
 
 mongoose
   .connect(process.env.MONGO_URL)
@@ -23,6 +25,6 @@ mongoose
   })
   .catch((err) => console.log(err));
 
-app.get('/', (req, res) => {
-    res.send('API sudah berjalan')
-})
+app.get("/", (req, res) => {
+  res.send("API sudah berjalan");
+});

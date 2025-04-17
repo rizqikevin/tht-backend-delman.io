@@ -29,3 +29,10 @@ router.put("/:id", auth, async (req, res) => {
   );
   res.json(employeesUpdate);
 });
+
+router.delete("/:id", auth, async (req, res) => {
+  await Employees.findByIdAndDelete(req.params.id);
+  res.json({ message: "employe deleted" });
+});
+
+module.exports = router;
