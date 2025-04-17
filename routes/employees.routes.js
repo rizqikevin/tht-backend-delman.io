@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const bcrypt = require("bcryptjs");
 const Employees = require("../models/employees.model");
 const auth = require("../middleware/auth");
 
@@ -9,16 +10,18 @@ router.get("/", auth, async (req, res) => {
 });
 
 router.post("/", auth, async (req, res) => {
+  const { name, username, password, gender, birthday } = req.body;
+  const hash = await bcrypt.hash(password, 10);
   const newEmployees = new Employees({
-    name: req.body.name,
-    username: req.body.username,
-    password: req.body.password,
-    gender: req.body.gender,
-    birthday: req.body.birthday,
-    user: req.user.id,
+    name,
+    username,
+    password: hash,
+    gender,
+    birthday,
+    user :  req.user.id,
   });
-  const savedEmployees = newEmployees.save();
-  res.json(savedEmployees);
+  const savedEmployees = await newEmployees.save();
+  res.json({ savedEmployees });
 });
 
 router.put("/:id", auth, async (req, res) => {
@@ -30,8 +33,8 @@ router.put("/:id", auth, async (req, res) => {
   res.json(employeesUpdate);
 });
 
-router.delete("/:id", auth, async (req, res) => {
-  await Employees.findByIdAndDelete(req.params.id);
+router.delete("/:name", auth, async (req, res) => {
+  await Employees.findOneAndDelete(req.params.name);
   res.json({ message: "employe deleted" });
 });
 
