@@ -28,16 +28,17 @@ router.get("/", auth, async (req, res) => {
 });
 
 router.post("/", auth, async (req, res) => {
-  const { name, gender, birthday, no_ktp, address } = req.body;
+  const { name, gender, birthday, no_ktp, address, phone } = req.body;
   const newPatient = new Patients({
     name,
     gender,
     birthday,
     no_ktp,
     address,
+    phone,
     user: req.user.id,
   });
-  const patientSaved = newPatient.save();
+  const patientSaved = await newPatient.save();
   res.json(patientSaved);
 });
 
